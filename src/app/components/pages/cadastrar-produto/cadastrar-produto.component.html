@@ -6,33 +6,77 @@
                 <p class="card-subtitle">Preencha os campos para incluir um produto.</p>
             </div>
             <div class="card-body">
-                <form>
+
+                <div *ngIf="mensagem != '' " class="alert alert-primary alert-dismissible">
+                    <strong>{{ mensagem }}</strong>
+                    <button (click)="mensagem = '' " type= "button" class="btn-close" aria-label="Close"></button>
+                </div>
+
+                <form [formGroup]="formulario" (ngSubmit)="onSubmit()">
                     <div class="mb-3">
                         <label for="nome" class="form-label">Nome do Produto</label>
-                        <input type="text" class="form-control" id="nome" placeholder="Digite o nome do produto">
+                        <input formControlName="nome" type="text" class="form-control" id="nome" placeholder="Digite o nome do produto">
+                        
+                        <div class="text-danger">
+                            <span *ngIf="formulario.get('nome')?.touched && formulario.get('nome')?.hasError('required')">
+                                Por, favor informe o nome do produto.
+                            </span>
+                            <span *ngIf="formulario.get('nome')?.touched && formulario.get('nome')?.hasError('minlength')">
+                                Por favor, informe o nome do produto com pelo menos 8 caracteres.
+                            </span>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="preco" class="form-label">Preço</label>
-                        <input type="number" class="form-control" id="preco" step="0.01" placeholder="Digite o preço">
+                        <input formControlName="preco" type="number" class="form-control" id="preco" step="0.01" placeholder="Digite o preço">
+                        
+                        <div class="text-danger">
+                            <span *ngIf="formulario.get('preco')?.touched && formulario.get('preco')?.hasError('required')">
+                                Por, favor informe o preço do produto.
+                            </span>
+                            <span *ngIf="formulario.get('preco')?.touched && formulario.get('preco')?.hasError('min')">
+                                Por favor, informe o preço com valor minimo de '0.01'.
+                            </span>
+                        </div>
+
                     </div>
                     <div class="mb-3">
                         <label for="quantidade" class="form-label">Quantidade</label>
-                        <input type="number" class="form-control" id="quantidade" placeholder="Digite a quantidade">
+                        <input formControlName="quantidade" type="number" class="form-control" id="quantidade" placeholder="Digite a quantidade">
+                        
+                        <div class="text-danger">
+                            <span *ngIf="formulario.get('quantidade')?.touched && formulario.get('quantidade')?.hasError('required')">
+                                Por, favor informe a quantidade do produto.
+                            </span>
+                            <span *ngIf="formulario.get('quantidade')?.touched && formulario.get('quantidade')?.hasError('min')">
+                                Por favor, informe a quantidade com valor mínimo de '1'.
+                            </span>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="categoria" class="form-label">Categoria</label>
-                        <select class="form-select" id="categoria">
-                            <option selected>Escolha uma categoria</option>
-                            <option value="1">Eletrônicos</option>
-                            <option value="2">Roupas</option>
-                            <option value="3">Alimentos</option>
-                            <option value="4">Livros</option>
+                        <select class="form-select" id="categoria" formControlName="categoriaId">
+                            <!--opção default do campo - refrente a fazio-->
+                            <option value="">Escolha uma categoria</option>
+                            
+                            <!--exibir as opçoes do campo-->
+                            <option *ngFor="let c of categorias" value="{{c.id}}">
+                                {{c.nome}}
+                            </option>
                         </select>
+
+                        <div class="text-danger">
+                            <span *ngIf="formulario.get('categoriaId')?.touched && formulario.get('categoriaId')?.hasError('required')">
+                                Por, favor informe a categoria do produto.
+                            </span>
+                        </div>
                     </div>
+
                     <div class="mb-3">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" [disabled]="formulario.invalid">
                             Cadastrar Produto
                         </button>
+
                     </div>
                 </form>
             </div>
